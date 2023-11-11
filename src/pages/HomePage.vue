@@ -3,18 +3,36 @@
     <h1>Monster Slayer</h1>
   </header>
   <div id="game">
-    <section id="monster" class="container">
-      <h2>Monster Health</h2>
-      <div class="healthbar">
-        <div class="healthbar__value" :style="monsterBarStyle"></div>
+    <div class="container">
+      <div class="row" style="display: flex">
+        <div class="col">
+          <section id="player" class="container">
+            <h2>Warrior</h2>
+            <img
+              class="spirit"
+              src="@/assets/player/warrior-idle.gif"
+              alt="warrior"
+            />
+            <div class="healthbar">
+              <div class="healthbar__value" :style="playerBarStyle"></div>
+            </div>
+          </section>
+        </div>
+        <div class="col">
+          <section id="monster" class="container">
+            <h2>Monster</h2>
+            <img
+              class="spirit"
+              src="@/assets/monster/monster-idle.gif"
+              alt="monster"
+            />
+            <div class="healthbar">
+              <div class="healthbar__value" :style="monsterBarStyle"></div>
+            </div>
+          </section>
+        </div>
       </div>
-    </section>
-    <section id="player" class="container">
-      <h2>Your Health</h2>
-      <div class="healthbar">
-        <div class="healthbar__value" :style="playerBarStyle"></div>
-      </div>
-    </section>
+    </div>
     <section v-if="winner" class="container" id="gamemessage">
       <h2>Game Over!</h2>
       <h3 v-if="winner === 'player'">You won!</h3>
@@ -285,5 +303,9 @@ button:disabled {
 
 .log--heal {
   color: green;
+}
+
+.spirit {
+  width: 50%;
 }
 </style>
