@@ -97,34 +97,40 @@ export default {
     },
     attackMonster() {
       this.playerState = "attacking";
+      this.monsterState = "hit";
       setTimeout(() => {
         this.playerState = "idle";
-      }, 1000);
-      const attackValue = getRandomValue(5, 12);
-      this.monsterHealth -= attackValue;
-      this.addLogMessage("player", "attack", attackValue);
-      this.attackPlayer();
-      this.currentRoud++;
+        this.monsterState = "idle";
+        const attackValue = getRandomValue(5, 12);
+        this.monsterHealth -= attackValue;
+        this.addLogMessage("player", "attack", attackValue);
+        this.attackPlayer();
+        this.currentRoud++;
+      }, 580);
     },
     attackPlayer() {
       this.monsterState = "attacking";
+      // this.playerState = "hit";
+      const attackValue = getRandomValue(8, 15);
       setTimeout(() => {
         this.monsterState = "idle";
-      }, 1000);
-      const attackValue = getRandomValue(8, 15);
-      this.playerHealth -= attackValue;
+        // this.playerState = "idle";
+        this.playerHealth -= attackValue;
+      }, 1200);
       this.addLogMessage("monster", "attack", attackValue);
     },
     SpecialAttack() {
       this.playerState = "attacking";
+      this.monsterState = "hit";
+      const attackValue = getRandomValue(10, 25);
       setTimeout(() => {
         this.playerState = "idle";
-      }, 1000);
-      const attackValue = getRandomValue(10, 25);
-      this.monsterHealth -= attackValue;
-      this.addLogMessage("player", "attack", attackValue);
-      this.currentRoud++;
-      this.attackPlayer();
+        this.monsterState = "idle";
+        this.monsterHealth -= attackValue;
+        this.addLogMessage("player", "attack", attackValue);
+        this.currentRoud++;
+        this.attackPlayer();
+      }, 1400);
     },
     healPlayer() {
       const healValue = getRandomValue(10, 25);
