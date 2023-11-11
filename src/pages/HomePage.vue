@@ -8,11 +8,7 @@
         <div class="col">
           <section id="player" class="container">
             <h2>Warrior</h2>
-            <img
-              class="spirit"
-              src="@/assets/player/warrior-idle.gif"
-              alt="warrior"
-            />
+            <img class="spirit" :src="playerImage" alt="warrior" />
             <div class="healthbar">
               <div class="healthbar__value" :style="playerBarStyle"></div>
             </div>
@@ -21,11 +17,7 @@
         <div class="col">
           <section id="monster" class="container">
             <h2>Monster</h2>
-            <img
-              class="spirit"
-              src="@/assets/monster/monster-idle.gif"
-              alt="monster"
-            />
+            <img class="spirit" :src="monsterImage" alt="monster" />
             <div class="healthbar">
               <div class="healthbar__value" :style="monsterBarStyle"></div>
             </div>
@@ -88,6 +80,8 @@ export default {
       heals: 2,
       winner: "",
       logMessages: [],
+      playerState: "idle",
+      monsterState: "idle",
     };
   },
   methods: {
@@ -98,8 +92,14 @@ export default {
       this.heals = 2;
       this.winner = null;
       this.logMessages = [];
+      this.playerState = "idle";
+      this.monsterState = "idle";
     },
     attackMonster() {
+      this.playerState = "attacking";
+      setTimeout(() => {
+        this.playerState = "idle";
+      }, 1000);
       const attackValue = getRandomValue(5, 12);
       this.monsterHealth -= attackValue;
       this.addLogMessage("player", "attack", attackValue);
@@ -107,11 +107,19 @@ export default {
       this.currentRoud++;
     },
     attackPlayer() {
+      this.monsterState = "attacking";
+      setTimeout(() => {
+        this.monsterState = "idle";
+      }, 1000);
       const attackValue = getRandomValue(8, 15);
       this.playerHealth -= attackValue;
       this.addLogMessage("monster", "attack", attackValue);
     },
     SpecialAttack() {
+      this.playerState = "attacking";
+      setTimeout(() => {
+        this.playerState = "idle";
+      }, 1000);
       const attackValue = getRandomValue(10, 25);
       this.monsterHealth -= attackValue;
       this.addLogMessage("player", "attack", attackValue);
@@ -132,6 +140,7 @@ export default {
     },
     surrender() {
       this.winner = "monster";
+      this.playerState = "dead";
     },
     addLogMessage(who, what, value) {
       this.logMessages.unshift({
@@ -157,6 +166,26 @@ export default {
     mayUseSpecialAttack() {
       return this.currentRoud % 3 !== 0;
     },
+    playerImage() {
+      if (this.playerState === "attacking") {
+        return "warrior-attack.gif";
+      } else if (this.playerState === "hit") {
+        return "warrior-hit-and-dead.gif";
+      } else if (this.playerState === "dead") {
+        return "warrior-hit-and-dead.gif";
+      }
+      return "warrior-idle.gif";
+    },
+    monsterImage() {
+      if (this.monsterState === "attacking") {
+        return "monster-attack.gif";
+      } else if (this.monsterState === "hit") {
+        return "monster-hit.gif";
+      } else if (this.monsterState === "dead") {
+        return "monster-dead.gif";
+      }
+      return "monster-idle.gif";
+    },
     gameOver() {
       return this.playerHealth <= 0;
     },
@@ -164,20 +193,18 @@ export default {
   watch: {
     playerHealth(data) {
       if (data <= 0 && this.monsterHealth <= 0) {
-        console.log("draw");
         this.winner = "draw";
       } else if (data < 0) {
-        console.log("You Lost");
         this.winner = "monster";
+        this.playerState = "dead";
       }
     },
     monsterHealth(data) {
       if (data <= 0 && this.playerHealth <= 0) {
-        console.log("draw");
         this.winner = "draw";
       } else if (data < 0) {
-        console.log("you won");
         this.winner = "player";
+        this.monsterState = "dead";
       }
     },
   },
@@ -306,6 +333,6 @@ button:disabled {
 }
 
 .spirit {
-  width: 50%;
+  width: 100%;
 }
 </style>
