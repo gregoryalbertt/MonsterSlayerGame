@@ -138,6 +138,7 @@ export default {
     },
     healPlayer() {
       const healValue = getRandomValue(10, 25);
+      this.playerState = "healing";
       if (healValue + this.playerHealth > 100) {
         this.playerHealth = 100;
       } else {
@@ -146,7 +147,10 @@ export default {
       this.heals--;
       this.currentRoud++;
       this.addLogMessage("player", "heals", healValue);
-      this.attackPlayer();
+      setTimeout(() => {
+        this.playerState = "idle";
+        this.attackPlayer();
+      }, 600);
     },
     surrender() {
       this.winner = "monster";
@@ -186,6 +190,8 @@ export default {
         return "warrior-hit-and-dead.gif";
       } else if (this.playerState === "dead") {
         return "warrior-hit-and-dead.gif";
+      } else if (this.playerState === "healing") {
+        return "warrior-heal.gif";
       }
       return "warrior-idle.gif";
     },
