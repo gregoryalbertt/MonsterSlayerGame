@@ -114,9 +114,13 @@ export default {
     },
     attackPlayer() {
       this.monsterState = "attacking";
+      setTimeout(() => {
+        this.playerState = "hit";
+      }, 700);
       const attackValue = getRandomValue(8, 15);
       setTimeout(() => {
         this.monsterState = "idle";
+        this.playerState = "idle";
         this.playerHealth -= attackValue;
         this.endTurn = true;
       }, 1200);
@@ -187,7 +191,7 @@ export default {
       if (this.playerState === "attacking") {
         return "warrior-attack.gif";
       } else if (this.playerState === "hit") {
-        return "warrior-hit-and-dead.gif";
+        return "warrior-hit.gif";
       } else if (this.playerState === "dead") {
         return "warrior-hit-and-dead.gif";
       } else if (this.playerState === "healing") {
