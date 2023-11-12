@@ -37,7 +37,9 @@
       <button @click="SpecialAttack" :disabled="mayUseSpecialAttack">
         SPECIAL ATTACK
       </button>
-      <button @click="healPlayer" :disabled="mayHeal">HEAL</button>
+      <button @click="healPlayer" :disabled="!mayHeal">
+        HEAL ({{ heals }})
+      </button>
       <button :disabled="!endTurn" @click="surrender">SURRENDER</button>
     </section>
     <section id="log" class="container">
@@ -175,7 +177,7 @@ export default {
       return this.endTurn ? this.currentRoud % 3 !== 0 : true;
     },
     mayHeal() {
-      return this.heals && !this.endTurn;
+      return this.endTurn ? this.heals : false;
     },
     playerImage() {
       if (this.playerState === "attacking") {
