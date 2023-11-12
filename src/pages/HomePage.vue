@@ -33,12 +33,12 @@
       <button @click="startNewGame">Start New Game</button>
     </section>
     <section v-else id="controls">
-      <button @click="attackMonster">ATTACK</button>
+      <button :disabled="!endTurn" @click="attackMonster">ATTACK</button>
       <button @click="SpecialAttack" :disabled="mayUseSpecialAttack">
         SPECIAL ATTACK
       </button>
-      <button @click="healPlayer" :disabled="!heals">HEAL</button>
-      <button @click="surrender">SURRENDER</button>
+      <button @click="healPlayer" :disabled="mayHeal">HEAL</button>
+      <button :disabled="!endTurn" @click="surrender">SURRENDER</button>
     </section>
     <section id="log" class="container">
       <h2>Battle Log</h2>
@@ -82,6 +82,7 @@ export default {
       logMessages: [],
       playerState: "idle",
       monsterState: "idle",
+      endTurn: true,
     };
   },
   methods: {
@@ -96,6 +97,7 @@ export default {
       this.monsterState = "idle";
     },
     attackMonster() {
+      this.endTurn = false;
       this.playerState = "attacking";
       this.monsterState = "hit";
       setTimeout(() => {
@@ -110,16 +112,16 @@ export default {
     },
     attackPlayer() {
       this.monsterState = "attacking";
-      // this.playerState = "hit";
       const attackValue = getRandomValue(8, 15);
       setTimeout(() => {
         this.monsterState = "idle";
-        // this.playerState = "idle";
         this.playerHealth -= attackValue;
+        this.endTurn = true;
       }, 1200);
       this.addLogMessage("monster", "attack", attackValue);
     },
     SpecialAttack() {
+      this.endTurn = false;
       this.playerState = "attacking";
       this.monsterState = "hit";
       const attackValue = getRandomValue(10, 25);
@@ -170,7 +172,10 @@ export default {
       return { width: this.playerHealth + "%" };
     },
     mayUseSpecialAttack() {
-      return this.currentRoud % 3 !== 0;
+      return this.endTurn ? this.currentRoud % 3 !== 0 : true;
+    },
+    mayHeal() {
+      return this.heals && !this.endTurn;
     },
     playerImage() {
       if (this.playerState === "attacking") {
@@ -197,20 +202,33 @@ export default {
     },
   },
   watch: {
-    playerHealth(data) {
-      if (data <= 0 && this.monsterHealth <= 0) {
-        this.winner = "draw";
-      } else if (data < 0) {
-        this.winner = "monster";
-        this.playerState = "dead";
-      }
-    },
-    monsterHealth(data) {
-      if (data <= 0 && this.playerHealth <= 0) {
-        this.winner = "draw";
-      } else if (data < 0) {
-        this.winner = "player";
-        this.monsterState = "dead";
+    // playerHealth(data) {
+    //   if (data <= 0 && this.monsterHealth <= 0) {
+    //     this.winner = "draw";
+    //   } else if (data < 0) {
+    //     this.winner = "monster";
+    //     this.playerState = "dead";
+    //   }
+    // },
+    // monsterHealth(data) {
+    //   if (data <= 0 && this.playerHealth <= 0) {
+    //     this.winner = "draw";
+    //   } else if (data < 0) {
+    //     this.winner = "player";
+    //     this.monsterState = "dead";
+    //   }
+    // },
+    endTurn(endTurn) {
+      if (endTurn) {
+        if (this.playerHealth <= 0 && this.monsterHealth <= 0) {
+          this.winner = "draw";
+        } else if (this.playerHealth <= 0) {
+          this.winner = "monster";
+          this.playerState = "dead";
+        } else if (this.monsterHealth <= 0) {
+          this.winner = "player";
+          this.monsterState = "dead";
+        }
       }
     },
   },
